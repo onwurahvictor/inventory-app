@@ -7,6 +7,7 @@ const Register = () => {
   const { register } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
+    name: '',
     userName: '',
     email: '',
     password: '',
@@ -34,6 +35,7 @@ const Register = () => {
 
     try {
       const result = await register({
+        name: formData.name,
         userName: formData.userName,
         email: formData.email,
         password: formData.password,
@@ -62,6 +64,18 @@ const Register = () => {
       )}
 
       <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label>Full Name *</label>
+          <input
+            type="text"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            placeholder="Enter your full name"
+            required
+            disabled={loading}
+          />
+        </div>
+
         <div className="form-group">
           <label>Username *</label>
           <input
