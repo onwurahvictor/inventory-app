@@ -1,0 +1,88 @@
+/* Layout.module.css */
+.layout {
+  min-height: 100vh;
+  background-color: #f9fafb;
+}
+
+.mainContent {
+  padding-left: 0;
+}
+
+@media (min-width: 1024px) {
+  .mainContent {
+    padding-left: 16rem; /* 64 * 0.25rem = 16rem */
+  }
+}
+
+.sidebarMobile {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+}
+
+@media (min-width: 1024px) {
+  .sidebarMobile {
+    display: none;
+  }
+}
+
+.sidebarDesktop {
+  display: none;
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: 16rem;
+  flex-direction: column;
+}
+
+@media (min-width: 1024px) {
+  .sidebarDesktop {
+    display: flex;
+  }
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background-color: #4b5563;
+  opacity: 0.75;
+}
+
+.sidebarInner {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: 16rem;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+}
+
+.footer {
+  background-color: white;
+  border-top: 1px solid #e5e7eb;
+  padding: 1rem 0;
+}
+
+.footerContent {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@media (min-width: 640px) {
+  .footerContent {
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .footerContent {
+    padding: 0 2rem;
+  }
+}
+
+
+
+
