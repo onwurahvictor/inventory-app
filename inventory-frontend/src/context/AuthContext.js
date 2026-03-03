@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
   const loadUser = async () => {
     try {
       const response = await authAPI.getMe();
-      setUser(response.data.data.user || response.data.user); // handle backend shape
+      setUser(response.data.data.user || response.data.user);
     } catch (err) {
       console.error('Failed to load user:', err);
       localStorage.removeItem('token');
@@ -40,48 +40,46 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (email, password) => {
-  try {
-    setError(null);
-    const response = await authAPI.login({ email, password });
-
-    if (response.data.success) {
-      const userData = response.data.data.user;
-      localStorage.setItem('token', userData.token); // ✅ token is inside data.user
-      setUser(userData);
-      return { success: true };
-    } else {
-      return { success: false, error: response.data.message || 'Login failed' };
+    try {
+      setError(null);
+      const response = await authAPI.login({ email, password });
+      if (response.data.success) {
+        const userData = response.data.data.user;
+        localStorage.setItem('token', userData.token);
+        setUser(userData);
+        return { success: true };
+      } else {
+        return { success: false, error: response.data.message || 'Login failed' };
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      return {
+        success: false,
+        error: err.response?.data?.message || 'Network error. Please try again.'
+      };
     }
-  } catch (err) {
-    console.error('Login error:', err);
-    return { 
-      success: false, 
-      error: err.response?.data?.message || 'Network error. Please try again.' 
-    };
-  }
-};
+  };
 
-const register = async (name, email, password) => {
-  try {
-    setError(null);
-    const response = await authAPI.register({ name, email, password });
-
-    if (response.data.success) {
-      const userData = response.data.data.user;
-      localStorage.setItem('token', userData.token); // ✅ same fix
-      setUser(userData);
-      return { success: true };
-    } else {
-      return { success: false, error: response.data.message || 'Registration failed' };
+  const register = async (name, userName, email, password) => {
+    try {
+      setError(null);
+      const response = await authAPI.register({ name, userName, email, password });
+      if (response.data.success) {
+        const userData = response.data.data.user;
+        localStorage.setItem('token', userData.token);
+        setUser(userData);
+        return { success: true };
+      } else {
+        return { success: false, error: response.data.message || 'Registration failed' };
+      }
+    } catch (err) {
+      console.error('Registration error:', err);
+      return {
+        success: false,
+        error: err.response?.data?.message || 'Network error. Please try again.'
+      };
     }
-  } catch (err) {
-    console.error('Registration error:', err);
-    return { 
-      success: false, 
-      error: err.response?.data?.message || 'Network error. Please try again.' 
-    };
-  }
-};
+  };
 
   const logout = () => {
     localStorage.removeItem('token');
@@ -89,17 +87,7 @@ const register = async (name, email, password) => {
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        loading,
-        error,
-        login,
-        register,
-        logout,
-        loadUser,
-      }}
-    >
+    <AuthContext.Provider value={{ user, loading, error, login, register, logout, loadUser }}>
       {children}
     </AuthContext.Provider>
   );
