@@ -214,7 +214,7 @@ const Profile = () => {
             </div>
             <div className="user-info">
               <h2 className="user-name">{user?.name}</h2>
-              <div className="user-role">{formatRole(user?.role)}</div>
+              <div className="user-role">{user?.department || formatRole(user?.role)}</div>
             </div>
           </div>
 
