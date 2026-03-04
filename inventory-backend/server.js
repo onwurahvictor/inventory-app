@@ -75,6 +75,12 @@ app.use('/api/items', itemRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/alerts', alertRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+
+app.get('/api/test-email', async (req, res) => {
+  const result = await alertService.checkLowStockAlerts();
+  res.json(result);
+});
+
 app.use('/api', userRoutes);
 
 app.all('*', (req, res, next) => {
