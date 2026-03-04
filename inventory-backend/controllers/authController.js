@@ -154,7 +154,7 @@ export const updateSettings = async (req, res) => {
 // @access  Private
 export const updateProfile = async (req, res) => {
   try {
-    const { name, email, phone, location, bio, userName, department } = req.body;
+    const { name, email, phone, location, bio, userName, department, role } = req.body;
 
     const updates = {};
     if (name) updates.name = name;
@@ -164,6 +164,7 @@ export const updateProfile = async (req, res) => {
     if (bio !== undefined) updates.bio = bio;
     if (userName) updates.userName = userName;
     if (department !== undefined) updates.department = department;
+    if (role !== undefined && ['user', 'admin', 'manager'].includes(role)) updates.role = role;
 
     const user = await User.findByIdAndUpdate(
       req.user._id,

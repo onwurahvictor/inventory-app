@@ -89,6 +89,7 @@ const Profile = () => {
         email: formData.email,
         phone: formData.phone,
         department: formData.jobRole || formData.department,
+        role: formData.role,
         location: formData.location,
         bio: formData.bio
       };
@@ -338,6 +339,19 @@ const Profile = () => {
             </div>
 
             <div className="form-group">
+              <label>Role</label>
+              {isEditing ? (
+                <select name="role" value={formData.role || 'user'} onChange={handleInputChange} className="form-select">
+                  <option value="user">User</option>
+                  <option value="manager">Manager</option>
+                  <option value="admin">Admin</option>
+                </select>
+              ) : (
+                <div className="info-value">{formatRole(user?.role)}</div>
+              )}
+            </div>
+
+            <div className="form-group">
               <label>Department</label>
               {isEditing ? (
                 <select name="department" value={formData.department || ''} onChange={handleInputChange} className="form-select">
@@ -347,6 +361,7 @@ const Profile = () => {
                   <option value="Procurement">Procurement</option>
                   <option value="Logistics">Logistics</option>
                   <option value="Management">Management</option>
+                  <option value="Admin">Admin</option>
                 </select>
               ) : (
                 <div className="info-value">{user?.department || 'Not set'}</div>
