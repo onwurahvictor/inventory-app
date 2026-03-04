@@ -1,4 +1,7 @@
-/* src/index.css - Plain CSS without Tailwind */
+:root {
+  color-scheme: light only;
+}
+
 * {
   margin: 0;
   padding: 0;
