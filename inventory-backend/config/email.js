@@ -1,21 +1,17 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
 const createTransporter = () => {
-  // For development - mock transporter if no credentials
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    console.warn('⚠️ Email credentials not found. Using mock email transporter.');
-    
-    // Mock transporter for development
+  if (!process.env.RESEND_API_KEY) {
+    console.warn('⚠️ RESEND_API_KEY not found. Using mock email transporter.');
     return {
       sendMail: async (options) => {
         console.log('📧 MOCK EMAIL:');
         console.log('From:', options.from);
         console.log('To:', options.to);
         console.log('Subject:', options.subject);
-        console.log('Content:', options.html || options.text);
         console.log('--- Email not actually sent (missing credentials) ---');
         return { messageId: 'mock-email-id' };
       },
@@ -23,26 +19,32 @@ const createTransporter = () => {
     };
   }
 
-  // Real transporter with credentials
-  return nodemailer.createTransport({
-    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.EMAIL_PORT) || 587,
-    secure: process.env.EMAIL_SECURE === 'true',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
+  const resend = new Resend(process.env.RESEND_API_KEY);
+
+  return {
+    sendMail: async (options) => {
+      const { data, error } = await resend.emails.send({
+        from: options.from || 'Inventory App <onboarding@resend.dev>',
+        to: Array.isArray(options.to) ? options.to : options.to.split(',').map(e => e.trim()),
+        subject: options.subject,
+        html: options.html || options.text,
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      console.log('✅ Email sent via Resend:', data.id);
+      return { messageId: data.id };
     },
-    tls: {
-      rejectUnauthorized: false // Only for development
-    }
-  });
+    verify: async () => true
+  };
 };
 
 const transporter = createTransporter();
 
-// Verify connection configuration
 transporter.verify()
-  .then(() => console.log('✅ Email server is ready to send messages'))
-  .catch((error) => console.error('❌ Email transporter configuration error:', error));
+  .then(() => console.log('✅ Email transporter is ready'))
+  .catch((error) => console.error('❌ Email transporter error:', error));
 
 export default transporter;
