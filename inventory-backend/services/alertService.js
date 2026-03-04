@@ -1,37 +1,14 @@
 // services/alertService.js
-import nodemailer from 'nodemailer';
 import Item from '../models/Item.js';
 import Alert from '../models/Alert.js';
 import User from '../models/User.js';
-
-// Configure email transporter with debug mode
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-  port: parseInt(process.env.EMAIL_PORT) || 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  },
-  logger: true,
-  debug: true
-});
-
-// Verify transporter configuration
-transporter.verify((error, success) => {
-  if (error) {
-    console.error('❌ Email transporter configuration error:', error);
-  } else {
-    console.log('✅ Email transporter is ready to send messages');
-  }
-});
+import transporter from '../config/email.js';
 
 // Check for low stock items and send alerts
 export const checkLowStockAlerts = async () => {
   try {
     console.log('🔍 Checking for low stock items...');
     
-    // Find all items where quantity <= minimumStock
     const lowStockItems = await Item.find({
       $expr: { $lte: ['$quantity', '$minimumStock'] }
     }).populate('category');
@@ -42,7 +19,6 @@ export const checkLowStockAlerts = async () => {
       return { success: true, message: 'No low stock items found' };
     }
 
-    // Get all admin/manager users to notify (with or without lowStockAlerts field set)
     const admins = await User.find({ 
       role: { $in: ['admin', 'manager'] },
       $or: [{ lowStockAlerts: true }, { lowStockAlerts: { $exists: false } }]
@@ -69,7 +45,7 @@ export const checkLowStockAlerts = async () => {
           title: 'Low Stock Alert',
           description: `${item.name} stock is below minimum threshold (${item.quantity} units left, minimum: ${item.minimumStock})`,
           type: item.quantity === 0 ? 'critical' : 'warning',
-          user: admins[0]._id, 
+          user: admins[0]._id,
           itemId: item._id,
           itemName: item.name,
           category: item.category?.name,
@@ -83,7 +59,6 @@ export const checkLowStockAlerts = async () => {
       }
     }
 
-    // ✅ FIX: Send email for ALL low stock items, not just newly created alerts
     if (process.env.EMAIL_ENABLED === 'true') {
       console.log('📧 EMAIL_ENABLED is true, sending email...');
       await sendLowStockEmail(lowStockItems, admins);
@@ -106,13 +81,8 @@ export const checkLowStockAlerts = async () => {
 // Send email notification for low stock items
 const sendLowStockEmail = async (lowStockItems, recipients) => {
   try {
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-      console.log('❌ Email credentials not configured');
-      return;
-    }
+    const emailList = recipients.map(user => user.email);
 
-    const emailList = recipients.map(user => user.email).join(', ');
-    
     const itemsHtml = lowStockItems.map(item => `
       <tr>
         <td style="padding: 10px; border: 1px solid #ddd;">${item.name}</td>
@@ -125,14 +95,13 @@ const sendLowStockEmail = async (lowStockItems, recipients) => {
     `).join('');
 
     const mailOptions = {
-      from: `"Inventory System" <${process.env.EMAIL_USER}>`,
+      from: `Inventory System <${process.env.EMAIL_FROM || 'onboarding@resend.dev'}>`,
       to: emailList,
       subject: `⚠️ Low Stock Alert - ${lowStockItems.length} items need attention`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto;">
           <h2 style="color: #dc2626;">Low Stock Alert</h2>
           <p>The following items are running low on stock:</p>
-          
           <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
             <thead>
               <tr style="background: #f3f4f6;">
@@ -148,9 +117,8 @@ const sendLowStockEmail = async (lowStockItems, recipients) => {
               ${itemsHtml}
             </tbody>
           </table>
-          
           <p style="margin-top: 20px;">
-            <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/items?filter=low-stock" 
+            <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}/items?filter=low-stock" 
                style="background: #3b82f6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
               View in Dashboard
             </a>
@@ -162,14 +130,9 @@ const sendLowStockEmail = async (lowStockItems, recipients) => {
     console.log('📧 Attempting to send email to:', emailList);
     const info = await transporter.sendMail(mailOptions);
     console.log('✅ Email sent successfully:', info.messageId);
-    
+
   } catch (error) {
     console.error('❌ Error sending email:', error);
-    if (error.code === 'EAUTH') {
-      console.error('Authentication failed. Check your Gmail App Password.');
-    } else if (error.code === 'ECONNECTION') {
-      console.error('Connection failed. Check your SMTP host and port.');
-    }
   }
 };
 
