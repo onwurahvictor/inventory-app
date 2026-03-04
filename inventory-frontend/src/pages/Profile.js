@@ -17,6 +17,7 @@ const Profile = () => {
     { value: 'Procurement', label: 'Procurement' },
     { value: 'Logistics', label: 'Logistics' },
     { value: 'Management', label: 'Management' },
+    { value: 'Admin', label: 'Admin' },
   ];
 
   useEffect(() => {

@@ -38,7 +38,7 @@ const userSchema = new mongoose.Schema({
   },
   department: {
     type: String,
-    enum: ['Inventory Management', 'Warehouse', 'Procurement', 'Logistics', 'Management', ''],
+    enum: ['Inventory Management', 'Warehouse', 'Procurement', 'Logistics', 'Management','Admin', ''],
     default: ''
   },
   phone: {
