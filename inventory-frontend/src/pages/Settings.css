@@ -630,11 +630,7 @@ input:checked + .toggle-slider:before {
   }
 }
 
-/* Dark Mode */
-@media (prefers-color-scheme: dark) {
-  .settings-container {
-    background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
-  }
+
 
   .settings-sidebar,
   .settings-section {
@@ -702,4 +698,4 @@ input:checked + .toggle-slider:before {
     background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
     border-color: #8b5cf6;
   }
-}
+

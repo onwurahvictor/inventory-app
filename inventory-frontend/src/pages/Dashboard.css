@@ -1510,11 +1510,7 @@
   }
 }
 
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  .dashboard {
-    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
-  }
+
   
   .dashboard-header,
   .stat-card,
@@ -1584,4 +1580,4 @@
   .date-display {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
   }
-}
+

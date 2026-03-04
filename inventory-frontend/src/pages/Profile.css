@@ -547,11 +547,7 @@
   }
 }
 
-/* Dark Mode Support *
-@media (prefers-color-scheme: dark) {
-  .profile-container {
-    background: linear-gradient(135deg, #0c4a6e 0%, #082f49 100%);
-  }
+
   
   .profile-sidebar,
   .profile-details,
@@ -1204,13 +1200,7 @@
   }
 }
 
-/* Dark mode support (optional) */
-@media (prefers-color-scheme: dark) {
-  .profile-sidebar,
-  .profile-details,
-  .error-state {
-    background: #1f2937;
-  }
+
 
   .profile-title,
   .details-title,
@@ -1268,4 +1258,4 @@
   .avatar-placeholder {
     border-color: #4b5563;
   }
-}
+

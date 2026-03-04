@@ -602,11 +602,7 @@
   }
 }
 
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  .categories-container {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  }
+
   
   .add-category-card,
   .categories-list-card,
@@ -653,7 +649,7 @@
     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
     border-color: #475569;
   }
-}
+
 
 
 /* Add to Categories.css */

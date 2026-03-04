@@ -431,12 +431,7 @@
   }
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .register-card {
-    background-color: #2d3748;
-    color: #e2e8f0;
-  }
+
   
   .register-card h1 {
     color: #f7fafc;
@@ -497,4 +492,4 @@
     background-color: #2d3748;
     border-color: #cbd5e0;
   }
-}
+

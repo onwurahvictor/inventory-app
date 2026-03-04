@@ -654,11 +654,7 @@
   }
 }
 
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  .alerts-container {
-    background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
-  }
+
   
   .stat-card,
   .filters-section,
