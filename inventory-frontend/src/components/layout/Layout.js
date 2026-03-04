@@ -1,83 +1,58 @@
-// import React, { useState } from 'react';
-// import { Outlet } from 'react-router-dom';
-// import { useAuth } from '../../context/AuthContext';
-// import Sidebar from './Sidebar';
-// import Header from './Header';
-// // import styles from './Layout.module.css';
-// import styles from './Layout.css';
-
-// const Layout = () => {
-//   const [sidebarOpen, setSidebarOpen] = useState(true);
-//   const { user } = useAuth();
-
-//   if (!user) return null;
-
-//   return (
-//     <div className={styles.layout}>
-//       {/* Mobile sidebar */}
-//       {sidebarOpen && (
-//         <div className={styles.sidebarMobile}>
-//           <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
-//           <div className={styles.sidebarInner}>
-//             <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-//           </div>
-//         </div>
-//       )}
-      
-//       {/* Desktop sidebar */}
-//       <div className={styles.sidebarDesktop}>
-//         <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-//       </div>
-      
-//       {/* Main content */}
-//       <div className={`${styles.mainContent}`}>
-//         <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-//         <main style={{ flex: 1 }}>
-//           <Outlet />
-//         </main>
-        
-//         {/* Footer */}
-//         <footer className={styles.footer}>
-//           <div className={styles.footerContent}>
-//             <p style={{ fontSize: '0.875rem', color: '#6b7280' }}>
-//               © {new Date().getFullYear()} Inventory Manager. All rights reserved.
-//             </p>
-//             <p style={{ fontSize: '0.875rem', color: '#6b7280' }}>
-//               v1.0.0
-//             </p>
-//           </div>
-//         </footer>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Layout;
-
-
 // src/components/layout/Layout.js
-import React from 'react';
-import { Outlet, Link, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './Layout.css';
 
 const Layout = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
-  // Check if user exists to prevent duplicate rendering
-  if (!user) {
-    return null; // or redirect to login
-  }
+  if (!user) return null;
+
+  const navItems = [
+    { to: '/', icon: '📊', label: 'Dashboard' },
+    { to: '/items', icon: '📦', label: 'Items' },
+    { to: '/categories', icon: '🏷️', label: 'Categories' },
+    { to: '/alerts', icon: '🔔', label: 'Alerts' },
+    { to: '/profile', icon: '👤', label: 'Profile' },
+    { to: '/settings', icon: '⚙️', label: 'Settings' },
+  ];
+
+  const isActive = (path) => {
+    if (path === '/') return location.pathname === '/';
+    return location.pathname.startsWith(path);
+  };
 
   return (
     <div className="layout">
-      <nav className="sidebar">
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />
+      )}
+
+      {/* Mobile top bar */}
+      <div className="mobile-topbar">
+        <button className="hamburger-btn" onClick={() => setSidebarOpen(!sidebarOpen)}>
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <h2 className="mobile-logo">Inventory</h2>
+        <div className="mobile-avatar">
+          {user.name?.charAt(0).toUpperCase() || 'U'}
+        </div>
+      </div>
+
+      {/* Sidebar */}
+      <nav className={`sidebar ${sidebarOpen ? 'sidebar-open' : ''}`}>
         <div className="sidebar-header">
           <h2 className="logo">Inventory</h2>
           <div className="user-info">
@@ -92,24 +67,16 @@ const Layout = () => {
         </div>
 
         <div className="sidebar-menu">
-          <Link to="/" className="menu-item">
-            <span>📊</span> Dashboard
-          </Link>
-          <Link to="/items" className="menu-item">
-            <span>📦</span> Items
-          </Link>
-          <Link to="/categories" className="menu-item">
-            <span>🏷️</span> Categories
-          </Link>
-          <Link to="/alerts" className="menu-item">
-            <span>🔔</span> Alerts
-          </Link>
-          <Link to="/profile" className="menu-item">
-            <span>👤</span> Profile
-          </Link>
-          <Link to="/settings" className="menu-item">
-            <span>⚙️</span> Settings
-          </Link>
+          {navItems.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              className={`menu-item ${isActive(item.to) ? 'active' : ''}`}
+              onClick={() => setSidebarOpen(false)}
+            >
+              <span>{item.icon}</span> {item.label}
+            </Link>
+          ))}
         </div>
 
         <button onClick={handleLogout} className="logout-btn">

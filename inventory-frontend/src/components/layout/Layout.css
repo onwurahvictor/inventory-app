@@ -5,6 +5,7 @@
   background-color: #f5f5f5;
 }
 
+/* ===== SIDEBAR ===== */
 .sidebar {
   width: 250px;
   background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
@@ -15,6 +16,8 @@
   position: fixed;
   height: 100vh;
   overflow-y: auto;
+  z-index: 1000;
+  transition: transform 0.3s ease;
 }
 
 .sidebar-header {
@@ -39,6 +42,7 @@
 .user-avatar {
   width: 40px;
   height: 40px;
+  min-width: 40px;
   background-color: white;
   color: #667eea;
   border-radius: 50%;
@@ -52,16 +56,23 @@
 .user-details {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .user-name {
   font-weight: 600;
   font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .user-email {
   font-size: 12px;
   opacity: 0.8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sidebar-menu {
@@ -97,6 +108,8 @@
 
 .menu-item span {
   font-size: 18px;
+  min-width: 24px;
+  text-align: center;
 }
 
 .logout-btn {
@@ -123,10 +136,12 @@
   font-size: 18px;
 }
 
+/* ===== MAIN CONTENT ===== */
 .main-content {
   flex: 1;
   margin-left: 250px;
   min-height: 100vh;
+  min-width: 0;
 }
 
 .content-container {
@@ -135,63 +150,105 @@
   margin: 0 auto;
 }
 
-/* Responsive design */
+/* ===== MOBILE TOP BAR ===== */
+.mobile-topbar {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  z-index: 999;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.mobile-logo {
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.mobile-avatar {
+  width: 36px;
+  height: 36px;
+  background-color: white;
+  color: #667eea;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* ===== HAMBURGER BUTTON ===== */
+.hamburger-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  justify-content: center;
+}
+
+.hamburger-btn span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background-color: white;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+/* ===== OVERLAY ===== */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+/* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
+  .mobile-topbar {
+    display: flex;
+  }
+
+  .sidebar-overlay {
+    display: block;
+  }
+
   .sidebar {
-    width: 70px;
-    padding: 20px 0;
-  }
-  
-  .sidebar-header {
-    padding: 0 10px 20px;
-  }
-  
-  .logo {
-    font-size: 0;
-    position: relative;
-    height: 30px;
-  }
-  
-  .logo::after {
-    content: "IN";
-    font-size: 16px;
-    position: absolute;
+    transform: translateX(-100%);
+    width: 260px;
     top: 0;
-    left: 0;
-    right: 0;
-    text-align: center;
+    padding-top: 20px;
   }
-  
-  .user-info {
-    justify-content: center;
+
+  .sidebar.sidebar-open {
+    transform: translateX(0);
   }
-  
-  .user-details {
-    display: none;
-  }
-  
-  .sidebar-menu {
-    padding: 0 10px;
-  }
-  
-  .menu-item span {
-    margin-right: 0;
-  }
-  
-  .menu-item span:last-child {
-    display: none;
-  }
-  
-  .logout-btn span:last-child {
-    display: none;
-  }
-  
-  .logout-btn::before {
-    content: "🚪";
-    font-size: 18px;
-  }
-  
+
   .main-content {
-    margin-left: 70px;
+    margin-left: 0;
+    padding-top: 60px;
+  }
+
+  .content-container {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .content-container {
+    padding: 12px;
   }
 }
